@@ -84,6 +84,7 @@ export async function build(root: string = process.cwd()) {
   // 服务端渲染，产出 HTML str
 
   // const { render } = await import(serverEntryPath);
+  console.log(123);
 
   const { render } = await import(pathToFileURL(serverEntryPath));
 

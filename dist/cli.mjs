@@ -148,6 +148,7 @@ async function renderPage(render, root, clientBundle) {
 async function build(root = process.cwd()) {
   const [clientBundle, serverBundle] = await bundle(root);
   const serverEntryPath = path3.join(root, ".temp", "ssr-entry.js");
+  console.log(123);
   const { render } = await import(pathToFileURL(serverEntryPath));
   await renderPage(render, root, clientBundle);
 }
