@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "module": "commonjs" /* Specify what module code is generated. */,
+    "outDir": "dist",
+    "rootDir": "src" /* Specify the root folder within your source files. */,
+    "target": "ESNext" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
+    "jsx": "react-jsx"
+  }
+}

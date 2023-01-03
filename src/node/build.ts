@@ -1,0 +1,78 @@
+
+import path = require('path');
+import { build as viteBuild, InlineConfig } from 'vite';
+import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants';
+
+import type { RollupOutput } from 'rollup'
+import * as fs from "fs-extra";
+import { join } from "path";
+
+
+export async function bundle(root: string ) {
+    const resolveViteConfig = (isServer: boolean):InlineConfig => {
+        return {
+            mode: 'production',
+            root,
+            build: {
+                ssr: isServer,
+                outDir: isServer? '.temp' : 'build',
+                rollupOptions: {
+                    input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
+                    output:{
+                        format:isServer? 'cjs' : 'esm'
+                    }
+                }
+            }
+        }
+    }
+    try{
+        const clientBuild = async () => viteBuild(resolveViteConfig(false));
+        const serverBuild = async () => viteBuild(resolveViteConfig(true));
+
+        const [clientBundle, serverBundle] = await Promise.all([ serverBuild(), clientBuild() ])
+
+        return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
+    }catch (e) {
+        console.log(e);
+    }
+}
+
+export async function renderPage(
+    render:() => string,
+    root:string,
+    clientBundle:RollupOutput
+) {
+    const appHtml = render();
+    const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <title>title</title>
+      <meta name="description" content="xxx">
+    </head>
+    <body>
+      <div id="root">${appHtml}</div>
+    </body>
+  </html>`.trim();
+await fs.writeFile(path.join(root, 'build', 'index.html') , html)
+await fs.remove(path.join(root, ".temp"))
+
+}
+
+export async function build(root: string = process.cwd()) {
+    
+    // 打包代码，包括 client 端 + server 端
+    const [clientBundle, serverBundle] = await bundle(root);
+    // debugger
+    // 引入 server-entry 模块
+    const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js')
+    // 服务端渲染，产出 HTML str
+    
+    const { render } = require(serverEntryPath);
+
+    await renderPage(render, root, clientBundle)
+
+
+}   
