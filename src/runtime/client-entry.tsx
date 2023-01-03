@@ -1,16 +1,14 @@
-import { createRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client';
 import { App } from './App';
 
 function resderInBrowser() {
-    const containerEL = document.getElementById("root");
+  const containerEL = document.getElementById('root');
 
-    if(!containerEL){
-        throw new Error("#root element not found")
-    }
+  if (!containerEL) {
+    throw new Error('#root element not found');
+  }
 
-    createRoot(containerEL).render(<App />)
+  createRoot(containerEL).render(<App />);
 }
 
-resderInBrowser()
-
-
+resderInBrowser();

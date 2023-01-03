@@ -1,49 +1,63 @@
-
 import path = require('path');
 import { build as viteBuild, InlineConfig } from 'vite';
 import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants';
 
-import type { RollupOutput } from 'rollup'
-import * as fs from "fs-extra";
-import { join } from "path";
+import type { RollupOutput } from 'rollup';
+import fs from 'fs-extra';
+// import { join } from "path";
+import ora from 'ora';
 
+import { pathToFileURL } from 'url';
+// const dynamicImport = new Function('m', 'return import(m)');
 
-export async function bundle(root: string ) {
-    const resolveViteConfig = (isServer: boolean):InlineConfig => {
-        return {
-            mode: 'production',
-            root,
-            build: {
-                ssr: isServer,
-                outDir: isServer? '.temp' : 'build',
-                rollupOptions: {
-                    input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
-                    output:{
-                        format:isServer? 'cjs' : 'esm'
-                    }
-                }
-            }
+export async function bundle(root: string) {
+  const resolveViteConfig = (isServer: boolean): InlineConfig => {
+    return {
+      mode: 'production',
+      root,
+      build: {
+        ssr: isServer,
+        outDir: isServer ? '.temp' : 'build',
+        rollupOptions: {
+          input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
+          output: {
+            format: isServer ? 'cjs' : 'esm'
+          }
         }
-    }
-    try{
-        const clientBuild = async () => viteBuild(resolveViteConfig(false));
-        const serverBuild = async () => viteBuild(resolveViteConfig(true));
+      }
+    };
+  };
 
-        const [clientBundle, serverBundle] = await Promise.all([ serverBuild(), clientBuild() ])
+  // const { default: ora } = await dynamicImport('ora');
+  const spinner = ora();
+  spinner.start('Building client + server bundles...');
+  // console.log(('Building client + server bundles...'));
 
-        return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
-    }catch (e) {
-        console.log(e);
-    }
+  try {
+    const clientBuild = async () => viteBuild(resolveViteConfig(false));
+    const serverBuild = async () => viteBuild(resolveViteConfig(true));
+
+    const [clientBundle, serverBundle] = await Promise.all([
+      clientBuild(),
+      serverBuild()
+    ]);
+    spinner.stop();
+    return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
+  } catch (e) {
+    console.log(e);
+  }
 }
 
 export async function renderPage(
-    render:() => string,
-    root:string,
-    clientBundle:RollupOutput
+  render: () => string,
+  root: string,
+  clientBundle: RollupOutput
 ) {
-    const appHtml = render();
-    const html = `
+  const appHtml = render();
+  const clientChunk = clientBundle.output.find(
+    (chunk) => chunk.type === 'chunk' && chunk.isEntry
+  );
+  const html = `
   <!DOCTYPE html>
   <html>
     <head>
@@ -54,25 +68,24 @@ export async function renderPage(
     </head>
     <body>
       <div id="root">${appHtml}</div>
+      <script src="/${clientChunk.fileName}" type="module" ></script>
     </body>
   </html>`.trim();
-await fs.writeFile(path.join(root, 'build', 'index.html') , html)
-await fs.remove(path.join(root, ".temp"))
-
+  await fs.writeFile(path.join(root, 'build', 'index.html'), html);
+  await fs.remove(path.join(root, '.temp'));
 }
 
 export async function build(root: string = process.cwd()) {
-    
-    // 打包代码，包括 client 端 + server 端
-    const [clientBundle, serverBundle] = await bundle(root);
-    // debugger
-    // 引入 server-entry 模块
-    const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js')
-    // 服务端渲染，产出 HTML str
-    
-    const { render } = require(serverEntryPath);
+  // 打包代码，包括 client 端 + server 端
+  const [clientBundle, serverBundle] = await bundle(root);
+  //   debugger;
+  // 引入 server-entry 模块
+  const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js');
+  // 服务端渲染，产出 HTML str
 
-    await renderPage(render, root, clientBundle)
+  // const { render } = await import(serverEntryPath);
 
+  const { render } = await import(pathToFileURL(serverEntryPath));
 
-}   
+  await renderPage(render, root, clientBundle);
+}
