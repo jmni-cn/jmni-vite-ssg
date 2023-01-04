@@ -82,7 +82,7 @@ export async function build(root: string = process.cwd()) {
   // 引入 server-entry 模块
   const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js');
   // 服务端渲染，产出 HTML str
-  console.log('test lint-staged eslint --fix ');
+  console.log('test lint-staged eslint  ');
 
   // const { render } = await import(serverEntryPath);
   const { render } = await import(pathToFileURL(serverEntryPath));
