@@ -77,7 +77,7 @@ export async function renderPage(
 
 export async function build(root: string = process.cwd()) {
   // 打包代码，包括 client 端 + server 端
-  const [clientBundle, serverBundle] = await bundle(root);
+  const [clientBundle] = await bundle(root);
   //   debugger;
   // 引入 server-entry 模块
   const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js');
