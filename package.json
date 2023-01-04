@@ -11,14 +11,14 @@
     "dev": "island build docs",
     "preview": "cd docs/build && serve .",
     "lint": "eslint --fix  --ext .ts,.tsx,.js,.jsx ./",
-    "lint-staged": "eslint --fix"
+    "staged": "eslint --fix"
   },
   "bin": {
     "island": "bin/island.js"
   },
   "lint-staged": {
     "**/*.{js,jsx,tsx,ts}": [
-      "npm run lint-staged"
+      "npm run staged"
     ]
   },
   "keywords": [],
