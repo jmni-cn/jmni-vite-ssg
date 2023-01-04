@@ -11,7 +11,7 @@
     "dev": "island build docs",
     "preview": "cd docs/build && serve .",
     "lint": "eslint --fix  --ext .ts,.tsx,.js,.jsx ./",
-    "staged": "eslint --fix"
+    "staged": "eslint --ext .ts,.tsx,.js,.jsx ./"
   },
   "bin": {
     "island": "bin/island.js"
