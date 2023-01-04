@@ -1,132 +1,21 @@
-"use strict"; function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { newObj[key] = obj[key]; } } } newObj.default = obj; return newObj; } } function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _module = require('module'); const require = _module.createRequire.call(void 0, import.meta.url);
-var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
-  get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
-}) : x)(function(x) {
-  if (typeof require !== "undefined")
-    return require.apply(this, arguments);
-  throw new Error('Dynamic require of "' + x + '" is not supported');
-});
+"use strict"; function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _module = require('module'); const require = _module.createRequire.call(void 0, import.meta.url);
+
+
+
+var _chunkUGNOXD6Kjs = require('./chunk-UGNOXD6K.js');
+
+
+var _chunk7ISAOXNVjs = require('./chunk-7ISAOXNV.js');
 
 // src/node/cli.ts
 var _cac = require('cac'); var _cac2 = _interopRequireDefault(_cac);
 
-// src/node/dev.ts
-var _vite = require('vite');
-
-// src/node/plugin-island/indexHtml.ts
-var _promises = require('fs/promises');
-
-// src/node/constants/index.ts
-var _path = require('path'); var path = _interopRequireWildcard(_path);
-var PACKAGE_ROOT = path.join(__dirname, "..");
-var CLIENT_ENTRY_PATH = path.join(
-  PACKAGE_ROOT,
-  "src",
-  "runtime",
-  "client-entry.tsx"
-);
-var SERVER_ENTRY_PATH = path.join(
-  PACKAGE_ROOT,
-  "src",
-  "runtime",
-  "ssr-entry.tsx"
-);
-var DEFAULT_TEMPLATE_PATH = path.join(PACKAGE_ROOT, "template.html");
-
-// src/node/plugin-island/indexHtml.ts
-function pluginIndexHtml() {
-  return {
-    name: "island:index-html",
-    transformIndexHtml(html) {
-      return {
-        html,
-        tags: [
-          {
-            tag: "script",
-            attrs: {
-              type: "module",
-              src: `/@fs/${CLIENT_ENTRY_PATH}`
-            },
-            injectTo: "body"
-          }
-        ]
-      };
-    },
-    configureServer(server) {
-      return () => {
-        server.middlewares.use(async (req, res, next) => {
-          let content = await _promises.readFile.call(void 0, DEFAULT_TEMPLATE_PATH, "utf-8");
-          content = await server.transformIndexHtml(
-            req.url,
-            content,
-            req.originalUrl
-          );
-          res.setHeader("Content-Type", "text/html");
-          res.end(content);
-        });
-      };
-    }
-  };
-}
-
-// src/node/dev.ts
-var _pluginreact = require('@vitejs/plugin-react'); var _pluginreact2 = _interopRequireDefault(_pluginreact);
-
-// src/node/config.ts
-
-var _fsextra = require('fs-extra'); var _fsextra2 = _interopRequireDefault(_fsextra);
-
-function getUserConfigPath(root) {
-  try {
-    const supportConfigFiles = ["config.ts", "config.js"];
-    const configPath = supportConfigFiles.map((file) => _path.resolve.call(void 0, root, file)).find(_fsextra2.default.pathExistsSync);
-    return configPath;
-  } catch (e) {
-    console.error(`Failed to load user config: ${e}`);
-    throw e;
-  }
-}
-async function resolveConfig(root, command, mode) {
-  const configPath = getUserConfigPath(root);
-  const result = await _vite.loadConfigFromFile.call(void 0, 
-    {
-      command,
-      mode
-    },
-    configPath,
-    root
-  );
-  console.log(configPath);
-  if (result) {
-    const { config: rawConfig = {} } = result;
-    const userConfig = await (typeof rawConfig === "function" ? rawConfig() : rawConfig);
-    return [configPath, userConfig];
-  } else {
-    return [configPath, {}];
-  }
-}
-
-// src/node/dev.ts
-async function createDevServer(root) {
-  const config = await resolveConfig(root, "serve", "development");
-  console.log(config);
-  return _vite.createServer.call(void 0, {
-    root,
-    plugins: [pluginIndexHtml(), _pluginreact2.default.call(void 0, )],
-    server: {
-      fs: {
-        allow: [PACKAGE_ROOT]
-      }
-    }
-  });
-}
-
 // src/node/build.ts
-
-
+var _vite = require('vite');
+var _fsextra = require('fs-extra'); var _fsextra2 = _interopRequireDefault(_fsextra);
 var _ora = require('ora'); var _ora2 = _interopRequireDefault(_ora);
 var _url = require('url');
-var path2 = __require("path");
+var path = _chunk7ISAOXNVjs.__require.call(void 0, "path");
 async function bundle(root) {
   const resolveViteConfig = (isServer) => {
     return {
@@ -136,7 +25,7 @@ async function bundle(root) {
         ssr: isServer,
         outDir: isServer ? ".temp" : "build",
         rollupOptions: {
-          input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
+          input: isServer ? _chunkUGNOXD6Kjs.SERVER_ENTRY_PATH : _chunkUGNOXD6Kjs.CLIENT_ENTRY_PATH,
           output: {
             format: isServer ? "cjs" : "esm"
           }
@@ -178,28 +67,35 @@ async function renderPage(render, root, clientBundle) {
       <script src="/${clientChunk.fileName}" type="module" ><\/script>
     </body>
   </html>`.trim();
-  await _fsextra2.default.writeFile(path2.join(root, "build", "index.html"), html);
-  await _fsextra2.default.remove(path2.join(root, ".temp"));
+  await _fsextra2.default.writeFile(path.join(root, "build", "index.html"), html);
+  await _fsextra2.default.remove(path.join(root, ".temp"));
 }
 async function build(root = process.cwd()) {
   const [clientBundle, serverBundle] = await bundle(root);
-  const serverEntryPath = path2.join(root, ".temp", "ssr-entry.js");
+  const serverEntryPath = path.join(root, ".temp", "ssr-entry.js");
   console.log("test lint-staged eslint --fix");
   const { render } = await Promise.resolve().then(() => require(_url.pathToFileURL.call(void 0, serverEntryPath)));
   await renderPage(render, root, clientBundle);
 }
 
 // src/node/cli.ts
-
+var _path = require('path'); var _path2 = _interopRequireDefault(_path);
 var cli = _cac2.default.call(void 0, "island").version("0.0.1").help();
 cli.command("dev [root]", "start dev serve").action(async (root) => {
-  const server = await createDevServer(root);
-  await server.listen();
-  server.printUrls();
+  const createServer = async () => {
+    const { createDevServer } = await Promise.resolve().then(() => require("./dev.js"));
+    const server = await createDevServer(root, async () => {
+      await server.close();
+      await createServer();
+    });
+    await server.listen();
+    server.printUrls();
+  };
+  await createServer();
 });
 cli.command("build [root]", "build in production").action(async (root) => {
   try {
-    root = _path.resolve.call(void 0, root);
+    root = _path2.default.resolve(root);
     await build(root);
   } catch (e) {
     console.log(e);
