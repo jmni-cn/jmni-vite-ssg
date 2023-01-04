@@ -81,7 +81,12 @@ import pluginReact from "@vitejs/plugin-react";
 function createDevServer(root) {
   return createServer({
     root,
-    plugins: [pluginIndexHtml(), pluginReact()]
+    plugins: [pluginIndexHtml(), pluginReact()],
+    server: {
+      fs: {
+        allow: [PACKAGE_ROOT]
+      }
+    }
   });
 }
 
