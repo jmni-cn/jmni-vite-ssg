@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "prepare": "husky install",
-    "start": "tsup --watch",
+    "dev": "tsup --watch",
     "build": "tsup",
     "pnpm": "pnpm i",
-    "dev": "island build docs",
+    "islanddev": "island dev docs",
+    "islandbuild": "island build docs",
     "preview": "cd docs/build && serve .",
     "lint": "eslint --fix  --ext .ts,.tsx,.js,.jsx ./",
     "test:unit": "vitest --ui",
