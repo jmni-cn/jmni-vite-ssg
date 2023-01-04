@@ -54,7 +54,7 @@ function pluginIndexHtml() {
     },
     configureServer(server) {
       return () => {
-        server.middlewares.use(async (req, res) => {
+        server.middlewares.use(async (req, res, next) => {
           let content = await _promises.readFile.call(void 0, DEFAULT_TEMPLATE_PATH, "utf-8");
           content = await server.transformIndexHtml(
             req.url,
@@ -139,7 +139,7 @@ async function renderPage(render, root, clientBundle) {
   await _fsextra2.default.remove(path2.join(root, ".temp"));
 }
 async function build(root = process.cwd()) {
-  const [clientBundle] = await bundle(root);
+  const [clientBundle, serverBundle] = await bundle(root);
   const serverEntryPath = path2.join(root, ".temp", "ssr-entry.js");
   console.log("test lint-staged eslint --fix");
   const { render } = await Promise.resolve().then(() => require(_url.pathToFileURL.call(void 0, serverEntryPath)));
