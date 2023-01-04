@@ -18,7 +18,7 @@
   },
   "lint-staged": {
     "**/*.{js,jsx,tsx,ts}": [
-      "npm run staged"
+      "eslint --fix"
     ]
   },
   "keywords": [],
