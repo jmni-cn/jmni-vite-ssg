@@ -1,4 +1,4 @@
-import path = require('path');
+import path from 'path';
 import { build as viteBuild, InlineConfig } from 'vite';
 import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants';
 
@@ -6,18 +6,24 @@ import type { RollupOutput } from 'rollup';
 import fs from 'fs-extra';
 // import { join } from "path";
 import ora from 'ora';
-
+import { SiteConfig } from 'shared/types';
+import pluginReact from '@vitejs/plugin-react';
+import { pluginConfig } from './plugin-island/config';
 import { pathToFileURL } from 'url';
 // const dynamicImport = new Function('m', 'return import(m)');
 
-export async function bundle(root: string) {
+export async function bundle(root: string, config: SiteConfig) {
   const resolveViteConfig = (isServer: boolean): InlineConfig => {
     return {
       mode: 'production',
       root,
+      plugins: [pluginReact(), pluginConfig(config)],
+      ssr: {
+        noExternal: ['react-router-dom']
+      },
       build: {
         ssr: isServer,
-        outDir: isServer ? '.temp' : 'build',
+        outDir: isServer ? path.join(root, '.temp') : 'build',
         rollupOptions: {
           input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
           output: {
@@ -75,9 +81,9 @@ export async function renderPage(
   await fs.remove(path.join(root, '.temp'));
 }
 
-export async function build(root: string = process.cwd()) {
+export async function build(root: string = process.cwd(), config: SiteConfig) {
   // 打包代码，包括 client 端 + server 端
-  const [clientBundle, serverBundle] = await bundle(root);
+  const [clientBundle, serverBundle] = await bundle(root, config);
   //   debugger;
   // 引入 server-entry 模块
   const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js');
@@ -85,7 +91,7 @@ export async function build(root: string = process.cwd()) {
   console.log('test lint-staged eslint --fix');
 
   // const { render } = await import(serverEntryPath);
-  const { render } = await import(pathToFileURL(serverEntryPath));
+  const { render } = await import(pathToFileURL(serverEntryPath).pathname);
 
   await renderPage(render, root, clientBundle);
 }

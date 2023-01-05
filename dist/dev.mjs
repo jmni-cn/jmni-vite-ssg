@@ -2,12 +2,12 @@ import { createRequire } from "module"; const require = createRequire(import.met
 import {
   CLIENT_ENTRY_PATH,
   DEFAULT_TEMPLATE_PATH,
-  PACKAGE_ROOT
-} from "./chunk-KEYUN5CX.mjs";
+  PACKAGE_ROOT,
+  pluginConfig
+} from "./chunk-BLLPK33K.mjs";
 import {
   resolveConfig
-} from "./chunk-KLR6L2PM.mjs";
-import "./chunk-Q3QJ7CQS.mjs";
+} from "./chunk-RLDK5MNK.mjs";
 
 // src/node/dev.ts
 import { createServer } from "vite";
@@ -51,48 +51,16 @@ function pluginIndexHtml() {
 
 // src/node/dev.ts
 import pluginReact from "@vitejs/plugin-react";
-
-// src/node/plugin-island/config.ts
-import { relative } from "path";
-var SITE_DATA_ID = "island:site-data";
-function pluginConfig(config, restartServer) {
-  let server = null;
-  return {
-    name: "island:config",
-    resolveId(id) {
-      if (id === SITE_DATA_ID) {
-        return "\0" + SITE_DATA_ID;
-      }
-    },
-    load(id) {
-      if (id === "\0" + SITE_DATA_ID) {
-        return `export default ${JSON.stringify(config.siteData)}`;
-      }
-    },
-    configureServer(s) {
-      server = s;
-    },
-    async handleHotUpdate(ctx) {
-      const customWatchedFiles = [config.configPath];
-      const include = (id) => customWatchedFiles.some((file) => id.includes(file));
-      if (include(ctx.file)) {
-        console.log(
-          `
-${relative(config.root, ctx.file)} changed, restarting server...`
-        );
-        await restartServer();
-      }
-    }
-  };
-}
-
-// src/node/dev.ts
 async function createDevServer(root, restartServer) {
   const config = await resolveConfig(root, "serve", "development");
   console.log(config);
   return createServer({
-    root,
-    plugins: [pluginIndexHtml(), pluginReact(), pluginConfig(config, restartServer)],
+    root: PACKAGE_ROOT,
+    plugins: [
+      pluginIndexHtml(),
+      pluginReact(),
+      pluginConfig(config, restartServer)
+    ],
     server: {
       fs: {
         allow: [PACKAGE_ROOT]

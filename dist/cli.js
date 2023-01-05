@@ -2,30 +2,36 @@
 
 
 
-var _chunkUGNOXD6Kjs = require('./chunk-UGNOXD6K.js');
+
+var _chunkQOYCZJHWjs = require('./chunk-QOYCZJHW.js');
 
 
-var _chunk7ISAOXNVjs = require('./chunk-7ISAOXNV.js');
+var _chunk5ETD4WGWjs = require('./chunk-5ETD4WGW.js');
 
 // src/node/cli.ts
 var _cac = require('cac'); var _cac2 = _interopRequireDefault(_cac);
 
 // src/node/build.ts
+var _path = require('path'); var _path2 = _interopRequireDefault(_path);
 var _vite = require('vite');
 var _fsextra = require('fs-extra'); var _fsextra2 = _interopRequireDefault(_fsextra);
 var _ora = require('ora'); var _ora2 = _interopRequireDefault(_ora);
+var _pluginreact = require('@vitejs/plugin-react'); var _pluginreact2 = _interopRequireDefault(_pluginreact);
 var _url = require('url');
-var path = _chunk7ISAOXNVjs.__require.call(void 0, "path");
-async function bundle(root) {
+async function bundle(root, config) {
   const resolveViteConfig = (isServer) => {
     return {
       mode: "production",
       root,
+      plugins: [_pluginreact2.default.call(void 0, ), _chunkQOYCZJHWjs.pluginConfig.call(void 0, config)],
+      ssr: {
+        noExternal: ["react-router-dom"]
+      },
       build: {
         ssr: isServer,
-        outDir: isServer ? ".temp" : "build",
+        outDir: isServer ? _path2.default.join(root, ".temp") : "build",
         rollupOptions: {
-          input: isServer ? _chunkUGNOXD6Kjs.SERVER_ENTRY_PATH : _chunkUGNOXD6Kjs.CLIENT_ENTRY_PATH,
+          input: isServer ? _chunkQOYCZJHWjs.SERVER_ENTRY_PATH : _chunkQOYCZJHWjs.CLIENT_ENTRY_PATH,
           output: {
             format: isServer ? "cjs" : "esm"
           }
@@ -67,19 +73,19 @@ async function renderPage(render, root, clientBundle) {
       <script src="/${clientChunk.fileName}" type="module" ><\/script>
     </body>
   </html>`.trim();
-  await _fsextra2.default.writeFile(path.join(root, "build", "index.html"), html);
-  await _fsextra2.default.remove(path.join(root, ".temp"));
+  await _fsextra2.default.writeFile(_path2.default.join(root, "build", "index.html"), html);
+  await _fsextra2.default.remove(_path2.default.join(root, ".temp"));
 }
-async function build(root = process.cwd()) {
-  const [clientBundle, serverBundle] = await bundle(root);
-  const serverEntryPath = path.join(root, ".temp", "ssr-entry.js");
+async function build(root = process.cwd(), config) {
+  const [clientBundle, serverBundle] = await bundle(root, config);
+  const serverEntryPath = _path2.default.join(root, ".temp", "ssr-entry.js");
   console.log("test lint-staged eslint --fix");
-  const { render } = await Promise.resolve().then(() => require(_url.pathToFileURL.call(void 0, serverEntryPath)));
+  const { render } = await Promise.resolve().then(() => require(_url.pathToFileURL.call(void 0, serverEntryPath).pathname));
   await renderPage(render, root, clientBundle);
 }
 
 // src/node/cli.ts
-var _path = require('path'); var _path2 = _interopRequireDefault(_path);
+
 var cli = _cac2.default.call(void 0, "island").version("0.0.1").help();
 cli.command("dev [root]", "start dev serve").action(async (root) => {
   const createServer = async () => {
@@ -96,7 +102,8 @@ cli.command("dev [root]", "start dev serve").action(async (root) => {
 cli.command("build [root]", "build in production").action(async (root) => {
   try {
     root = _path2.default.resolve(root);
-    await build(root);
+    const config = await _chunk5ETD4WGWjs.resolveConfig.call(void 0, root, "build", "production");
+    await build(root, config);
   } catch (e) {
     console.log(e);
   }

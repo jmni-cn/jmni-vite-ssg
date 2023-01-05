@@ -1,29 +1,35 @@
 import { createRequire } from "module"; const require = createRequire(import.meta.url);
 import {
   CLIENT_ENTRY_PATH,
-  SERVER_ENTRY_PATH
-} from "./chunk-KEYUN5CX.mjs";
+  SERVER_ENTRY_PATH,
+  pluginConfig
+} from "./chunk-BLLPK33K.mjs";
 import {
-  __require
-} from "./chunk-Q3QJ7CQS.mjs";
+  resolveConfig
+} from "./chunk-RLDK5MNK.mjs";
 
 // src/node/cli.ts
 import cac from "cac";
 
 // src/node/build.ts
+import path from "path";
 import { build as viteBuild } from "vite";
 import fs from "fs-extra";
 import ora from "ora";
+import pluginReact from "@vitejs/plugin-react";
 import { pathToFileURL } from "url";
-var path = __require("path");
-async function bundle(root) {
+async function bundle(root, config) {
   const resolveViteConfig = (isServer) => {
     return {
       mode: "production",
       root,
+      plugins: [pluginReact(), pluginConfig(config)],
+      ssr: {
+        noExternal: ["react-router-dom"]
+      },
       build: {
         ssr: isServer,
-        outDir: isServer ? ".temp" : "build",
+        outDir: isServer ? path.join(root, ".temp") : "build",
         rollupOptions: {
           input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
           output: {
@@ -70,11 +76,11 @@ async function renderPage(render, root, clientBundle) {
   await fs.writeFile(path.join(root, "build", "index.html"), html);
   await fs.remove(path.join(root, ".temp"));
 }
-async function build(root = process.cwd()) {
-  const [clientBundle, serverBundle] = await bundle(root);
+async function build(root = process.cwd(), config) {
+  const [clientBundle, serverBundle] = await bundle(root, config);
   const serverEntryPath = path.join(root, ".temp", "ssr-entry.js");
   console.log("test lint-staged eslint --fix");
-  const { render } = await import(pathToFileURL(serverEntryPath));
+  const { render } = await import(pathToFileURL(serverEntryPath).pathname);
   await renderPage(render, root, clientBundle);
 }
 
@@ -96,7 +102,8 @@ cli.command("dev [root]", "start dev serve").action(async (root) => {
 cli.command("build [root]", "build in production").action(async (root) => {
   try {
     root = path2.resolve(root);
-    await build(root);
+    const config = await resolveConfig(root, "build", "production");
+    await build(root, config);
   } catch (e) {
     console.log(e);
   }
