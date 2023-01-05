@@ -1,5 +1,4 @@
 import cac from 'cac';
-import { createDevServer } from './dev';
 import { resolveConfig } from './config';
 
 import { build } from './build';

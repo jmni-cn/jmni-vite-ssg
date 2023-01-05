@@ -3,3 +3,11 @@ declare module 'island:site-data' {
   const siteData: UserConfig;
   export default siteData;
 }
+
+// declare module 'island:routes' {
+//   const routes: {
+//     element:any,
+//     path:string
+//   };
+//   export default routes;
+// }

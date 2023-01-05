@@ -1,4 +1,4 @@
-import { relative, resolve } from 'path';
+import { relative } from 'path';
 import { Plugin, ViteDevServer } from 'vite';
 import { SiteConfig } from 'shared/types/index';
 import { PACKAGE_ROOT } from '../../node/constants';
