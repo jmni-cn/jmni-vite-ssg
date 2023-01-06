@@ -24,7 +24,11 @@ async function bundle(root, config) {
     return {
       mode: "production",
       root,
-      plugins: [pluginReact(), pluginConfig(config), pluginRoutes({ root: config.root })],
+      plugins: [
+        pluginReact(),
+        pluginConfig(config),
+        pluginRoutes({ root: config.root })
+      ],
       ssr: {
         noExternal: ["react-router-dom"]
       },

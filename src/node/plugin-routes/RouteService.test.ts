@@ -36,7 +36,7 @@ describe('RouteService', async () => {
                const Route1 = loadable(() => import('TEST_DIR/guide/b.mdx'));
                 export const routes = [
                 { path: '/a', element: React.createElement(Route0) },
-               { path: '/guide/b', element: React.createElement(Route1) },
+               { path: '/guide/b', element: React.createElement(Route1) }
                 ];
             "
       `);
