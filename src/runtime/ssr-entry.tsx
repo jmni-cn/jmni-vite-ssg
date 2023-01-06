@@ -5,7 +5,7 @@ import { StaticRouter } from 'react-router-dom/server';
 // For ssr component render
 export function render() {
   return renderToString(
-    <StaticRouter location={'/guide'}>
+    <StaticRouter location={'/guide/a'}>
       <App />
     </StaticRouter>
   );

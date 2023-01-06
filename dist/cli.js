@@ -3,7 +3,8 @@
 
 
 
-var _chunkQOYCZJHWjs = require('./chunk-QOYCZJHW.js');
+
+var _chunkPFETZIPPjs = require('./chunk-PFETZIPP.js');
 
 
 var _chunk5ETD4WGWjs = require('./chunk-5ETD4WGW.js');
@@ -23,15 +24,19 @@ async function bundle(root, config) {
     return {
       mode: "production",
       root,
-      plugins: [_pluginreact2.default.call(void 0, ), _chunkQOYCZJHWjs.pluginConfig.call(void 0, config)],
+      plugins: [
+        _pluginreact2.default.call(void 0, ),
+        _chunkPFETZIPPjs.pluginConfig.call(void 0, config),
+        _chunkPFETZIPPjs.pluginRoutes.call(void 0, { root: config.root })
+      ],
       ssr: {
         noExternal: ["react-router-dom"]
       },
       build: {
         ssr: isServer,
-        outDir: isServer ? _path2.default.join(root, ".temp") : "build",
+        outDir: isServer ? _path2.default.join(root, ".temp") : _path2.default.join(root, "build"),
         rollupOptions: {
-          input: isServer ? _chunkQOYCZJHWjs.SERVER_ENTRY_PATH : _chunkQOYCZJHWjs.CLIENT_ENTRY_PATH,
+          input: isServer ? _chunkPFETZIPPjs.SERVER_ENTRY_PATH : _chunkPFETZIPPjs.CLIENT_ENTRY_PATH,
           output: {
             format: isServer ? "cjs" : "esm"
           }
@@ -79,7 +84,6 @@ async function renderPage(render, root, clientBundle) {
 async function build(root = process.cwd(), config) {
   const [clientBundle, serverBundle] = await bundle(root, config);
   const serverEntryPath = _path2.default.join(root, ".temp", "ssr-entry.js");
-  console.log("test lint-staged eslint --fix");
   const { render } = await Promise.resolve().then(() => require(_url.pathToFileURL.call(void 0, serverEntryPath).pathname));
   await renderPage(render, root, clientBundle);
 }

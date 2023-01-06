@@ -9,6 +9,7 @@ import ora from 'ora';
 import { SiteConfig } from 'shared/types';
 import pluginReact from '@vitejs/plugin-react';
 import { pluginConfig } from './plugin-island/config';
+import { pluginRoutes } from './plugin-routes';
 import { pathToFileURL } from 'url';
 // const dynamicImport = new Function('m', 'return import(m)');
 
@@ -17,13 +18,17 @@ export async function bundle(root: string, config: SiteConfig) {
     return {
       mode: 'production',
       root,
-      plugins: [pluginReact(), pluginConfig(config)],
+      plugins: [
+        pluginReact(),
+        pluginConfig(config),
+        pluginRoutes({ root: config.root })
+      ],
       ssr: {
         noExternal: ['react-router-dom']
       },
       build: {
         ssr: isServer,
-        outDir: isServer ? path.join(root, '.temp') : 'build',
+        outDir: isServer ? path.join(root, '.temp') : path.join(root, 'build'),
         rollupOptions: {
           input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
           output: {
@@ -88,7 +93,6 @@ export async function build(root: string = process.cwd(), config: SiteConfig) {
   // 引入 server-entry 模块
   const serverEntryPath = path.join(root, '.temp', 'ssr-entry.js');
   // 服务端渲染，产出 HTML str
-  console.log('test lint-staged eslint --fix');
 
   // const { render } = await import(serverEntryPath);
   const { render } = await import(pathToFileURL(serverEntryPath).pathname);

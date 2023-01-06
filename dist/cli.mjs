@@ -2,8 +2,9 @@ import { createRequire } from "module"; const require = createRequire(import.met
 import {
   CLIENT_ENTRY_PATH,
   SERVER_ENTRY_PATH,
-  pluginConfig
-} from "./chunk-BLLPK33K.mjs";
+  pluginConfig,
+  pluginRoutes
+} from "./chunk-HCNFRQKC.mjs";
 import {
   resolveConfig
 } from "./chunk-RLDK5MNK.mjs";
@@ -23,13 +24,13 @@ async function bundle(root, config) {
     return {
       mode: "production",
       root,
-      plugins: [pluginReact(), pluginConfig(config)],
+      plugins: [pluginReact(), pluginConfig(config), pluginRoutes({ root: config.root })],
       ssr: {
         noExternal: ["react-router-dom"]
       },
       build: {
         ssr: isServer,
-        outDir: isServer ? path.join(root, ".temp") : "build",
+        outDir: isServer ? path.join(root, ".temp") : path.join(root, "build"),
         rollupOptions: {
           input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH,
           output: {
@@ -79,7 +80,6 @@ async function renderPage(render, root, clientBundle) {
 async function build(root = process.cwd(), config) {
   const [clientBundle, serverBundle] = await bundle(root, config);
   const serverEntryPath = path.join(root, ".temp", "ssr-entry.js");
-  console.log("test lint-staged eslint --fix");
   const { render } = await import(pathToFileURL(serverEntryPath).pathname);
   await renderPage(render, root, clientBundle);
 }
