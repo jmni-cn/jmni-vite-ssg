@@ -3,8 +3,7 @@
 
 
 
-
-var _chunkPFETZIPPjs = require('./chunk-PFETZIPP.js');
+var _chunkXBKBMPJQjs = require('./chunk-XBKBMPJQ.js');
 
 
 var _chunk5ETD4WGWjs = require('./chunk-5ETD4WGW.js');
@@ -17,18 +16,13 @@ var _path = require('path'); var _path2 = _interopRequireDefault(_path);
 var _vite = require('vite');
 var _fsextra = require('fs-extra'); var _fsextra2 = _interopRequireDefault(_fsextra);
 var _ora = require('ora'); var _ora2 = _interopRequireDefault(_ora);
-var _pluginreact = require('@vitejs/plugin-react'); var _pluginreact2 = _interopRequireDefault(_pluginreact);
 var _url = require('url');
 async function bundle(root, config) {
   const resolveViteConfig = (isServer) => {
     return {
       mode: "production",
       root,
-      plugins: [
-        _pluginreact2.default.call(void 0, ),
-        _chunkPFETZIPPjs.pluginConfig.call(void 0, config),
-        _chunkPFETZIPPjs.pluginRoutes.call(void 0, { root: config.root })
-      ],
+      plugins: _chunkXBKBMPJQjs.createVitePlugins.call(void 0, config),
       ssr: {
         noExternal: ["react-router-dom"]
       },
@@ -36,7 +30,7 @@ async function bundle(root, config) {
         ssr: isServer,
         outDir: isServer ? _path2.default.join(root, ".temp") : _path2.default.join(root, "build"),
         rollupOptions: {
-          input: isServer ? _chunkPFETZIPPjs.SERVER_ENTRY_PATH : _chunkPFETZIPPjs.CLIENT_ENTRY_PATH,
+          input: isServer ? _chunkXBKBMPJQjs.SERVER_ENTRY_PATH : _chunkXBKBMPJQjs.CLIENT_ENTRY_PATH,
           output: {
             format: isServer ? "cjs" : "esm"
           }

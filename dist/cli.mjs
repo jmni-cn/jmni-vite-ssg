@@ -2,9 +2,8 @@ import { createRequire } from "module"; const require = createRequire(import.met
 import {
   CLIENT_ENTRY_PATH,
   SERVER_ENTRY_PATH,
-  pluginConfig,
-  pluginRoutes
-} from "./chunk-HCNFRQKC.mjs";
+  createVitePlugins
+} from "./chunk-JWAEP22W.mjs";
 import {
   resolveConfig
 } from "./chunk-RLDK5MNK.mjs";
@@ -17,18 +16,13 @@ import path from "path";
 import { build as viteBuild } from "vite";
 import fs from "fs-extra";
 import ora from "ora";
-import pluginReact from "@vitejs/plugin-react";
 import { pathToFileURL } from "url";
 async function bundle(root, config) {
   const resolveViteConfig = (isServer) => {
     return {
       mode: "production",
       root,
-      plugins: [
-        pluginReact(),
-        pluginConfig(config),
-        pluginRoutes({ root: config.root })
-      ],
+      plugins: createVitePlugins(config),
       ssr: {
         noExternal: ["react-router-dom"]
       },

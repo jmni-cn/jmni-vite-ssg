@@ -20,6 +20,46 @@ var SERVER_ENTRY_PATH = path.join(
 );
 var DEFAULT_TEMPLATE_PATH = path.join(PACKAGE_ROOT, "template.html");
 
+// src/node/plugin-island/indexHtml.ts
+import { readFile } from "fs/promises";
+function pluginIndexHtml() {
+  return {
+    name: "island:index-html",
+    transformIndexHtml(html) {
+      return {
+        html,
+        tags: [
+          {
+            tag: "script",
+            attrs: {
+              type: "module",
+              src: `/@fs/${CLIENT_ENTRY_PATH}`
+            },
+            injectTo: "body"
+          }
+        ]
+      };
+    },
+    configureServer(server) {
+      return () => {
+        server.middlewares.use(async (req, res) => {
+          let content = await readFile(DEFAULT_TEMPLATE_PATH, "utf-8");
+          content = await server.transformIndexHtml(
+            req.url,
+            content,
+            req.originalUrl
+          );
+          res.setHeader("Content-Type", "text/html");
+          res.end(content);
+        });
+      };
+    }
+  };
+}
+
+// src/node/vitePlugins.ts
+import pluginReact from "@vitejs/plugin-react";
+
 // src/node/plugin-island/config.ts
 import { relative } from "path";
 import { join } from "path";
@@ -137,11 +177,61 @@ function pluginRoutes(options) {
   };
 }
 
+// src/node/plugin-mdx/pluginMdxRollup.ts
+import pluginMdx from "@mdx-js/rollup";
+import remarkPluginGFM from "remark-gfm";
+import rehypePluginAutolinkHeadings from "rehype-autolink-headings";
+import rehypePluginSlug from "rehype-slug";
+import remarkPluginMDXFrontMatter from "remark-mdx-frontmatter";
+import remarkPluginFrontmatter from "remark-frontmatter";
+function pluginMdxRollup() {
+  return pluginMdx({
+    remarkPlugins: [
+      remarkPluginGFM,
+      remarkPluginFrontmatter,
+      [remarkPluginMDXFrontMatter, { name: "frontmatter" }]
+    ],
+    rehypePlugins: [
+      rehypePluginSlug,
+      [
+        rehypePluginAutolinkHeadings,
+        {
+          properties: {
+            class: "header-anchor"
+          },
+          content: {
+            type: "text",
+            value: "#"
+          }
+        }
+      ]
+    ]
+  });
+}
+
+// src/node/plugin-mdx/index.ts
+function createPluginMdx() {
+  return [pluginMdxRollup()];
+}
+
+// src/node/vitePlugins.ts
+function createVitePlugins(config, restartServer) {
+  return [
+    pluginIndexHtml(),
+    pluginReact({
+      jsxRuntime: "automatic"
+    }),
+    pluginConfig(config, restartServer),
+    pluginRoutes({
+      root: config.root
+    }),
+    createPluginMdx()
+  ];
+}
+
 export {
   PACKAGE_ROOT,
   CLIENT_ENTRY_PATH,
   SERVER_ENTRY_PATH,
-  DEFAULT_TEMPLATE_PATH,
-  pluginConfig,
-  pluginRoutes
+  createVitePlugins
 };

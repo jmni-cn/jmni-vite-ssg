@@ -17,6 +17,46 @@ var SERVER_ENTRY_PATH = _path2.default.join(
 );
 var DEFAULT_TEMPLATE_PATH = _path2.default.join(PACKAGE_ROOT, "template.html");
 
+// src/node/plugin-island/indexHtml.ts
+var _promises = require('fs/promises');
+function pluginIndexHtml() {
+  return {
+    name: "island:index-html",
+    transformIndexHtml(html) {
+      return {
+        html,
+        tags: [
+          {
+            tag: "script",
+            attrs: {
+              type: "module",
+              src: `/@fs/${CLIENT_ENTRY_PATH}`
+            },
+            injectTo: "body"
+          }
+        ]
+      };
+    },
+    configureServer(server) {
+      return () => {
+        server.middlewares.use(async (req, res) => {
+          let content = await _promises.readFile.call(void 0, DEFAULT_TEMPLATE_PATH, "utf-8");
+          content = await server.transformIndexHtml(
+            req.url,
+            content,
+            req.originalUrl
+          );
+          res.setHeader("Content-Type", "text/html");
+          res.end(content);
+        });
+      };
+    }
+  };
+}
+
+// src/node/vitePlugins.ts
+var _pluginreact = require('@vitejs/plugin-react'); var _pluginreact2 = _interopRequireDefault(_pluginreact);
+
 // src/node/plugin-island/config.ts
 
 
@@ -134,11 +174,61 @@ function pluginRoutes(options) {
   };
 }
 
+// src/node/plugin-mdx/pluginMdxRollup.ts
+var _rollup = require('@mdx-js/rollup'); var _rollup2 = _interopRequireDefault(_rollup);
+var _remarkgfm = require('remark-gfm'); var _remarkgfm2 = _interopRequireDefault(_remarkgfm);
+var _rehypeautolinkheadings = require('rehype-autolink-headings'); var _rehypeautolinkheadings2 = _interopRequireDefault(_rehypeautolinkheadings);
+var _rehypeslug = require('rehype-slug'); var _rehypeslug2 = _interopRequireDefault(_rehypeslug);
+var _remarkmdxfrontmatter = require('remark-mdx-frontmatter'); var _remarkmdxfrontmatter2 = _interopRequireDefault(_remarkmdxfrontmatter);
+var _remarkfrontmatter = require('remark-frontmatter'); var _remarkfrontmatter2 = _interopRequireDefault(_remarkfrontmatter);
+function pluginMdxRollup() {
+  return _rollup2.default.call(void 0, {
+    remarkPlugins: [
+      _remarkgfm2.default,
+      _remarkfrontmatter2.default,
+      [_remarkmdxfrontmatter2.default, { name: "frontmatter" }]
+    ],
+    rehypePlugins: [
+      _rehypeslug2.default,
+      [
+        _rehypeautolinkheadings2.default,
+        {
+          properties: {
+            class: "header-anchor"
+          },
+          content: {
+            type: "text",
+            value: "#"
+          }
+        }
+      ]
+    ]
+  });
+}
+
+// src/node/plugin-mdx/index.ts
+function createPluginMdx() {
+  return [pluginMdxRollup()];
+}
+
+// src/node/vitePlugins.ts
+function createVitePlugins(config, restartServer) {
+  return [
+    pluginIndexHtml(),
+    _pluginreact2.default.call(void 0, {
+      jsxRuntime: "automatic"
+    }),
+    pluginConfig(config, restartServer),
+    pluginRoutes({
+      root: config.root
+    }),
+    createPluginMdx()
+  ];
+}
 
 
 
 
 
 
-
-exports.PACKAGE_ROOT = PACKAGE_ROOT; exports.CLIENT_ENTRY_PATH = CLIENT_ENTRY_PATH; exports.SERVER_ENTRY_PATH = SERVER_ENTRY_PATH; exports.DEFAULT_TEMPLATE_PATH = DEFAULT_TEMPLATE_PATH; exports.pluginConfig = pluginConfig; exports.pluginRoutes = pluginRoutes;
+exports.PACKAGE_ROOT = PACKAGE_ROOT; exports.CLIENT_ENTRY_PATH = CLIENT_ENTRY_PATH; exports.SERVER_ENTRY_PATH = SERVER_ENTRY_PATH; exports.createVitePlugins = createVitePlugins;

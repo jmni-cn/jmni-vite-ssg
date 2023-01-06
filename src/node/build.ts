@@ -7,9 +7,7 @@ import fs from 'fs-extra';
 // import { join } from "path";
 import ora from 'ora';
 import { SiteConfig } from 'shared/types';
-import pluginReact from '@vitejs/plugin-react';
-import { pluginConfig } from './plugin-island/config';
-import { pluginRoutes } from './plugin-routes';
+import { createVitePlugins } from './vitePlugins';
 import { pathToFileURL } from 'url';
 // const dynamicImport = new Function('m', 'return import(m)');
 
@@ -18,11 +16,7 @@ export async function bundle(root: string, config: SiteConfig) {
     return {
       mode: 'production',
       root,
-      plugins: [
-        pluginReact(),
-        pluginConfig(config),
-        pluginRoutes({ root: config.root })
-      ],
+      plugins: createVitePlugins(config),
       ssr: {
         noExternal: ['react-router-dom']
       },
