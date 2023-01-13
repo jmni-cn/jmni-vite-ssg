@@ -1,27 +1,24 @@
-import { createRequire } from "module"; const require = createRequire(import.meta.url);
-import {
-  __dirname
-} from "./chunk-RLDK5MNK.mjs";
+"use strict";Object.defineProperty(exports, "__esModule", {value: true}); function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }var _module = require('module'); const require = _module.createRequire.call(void 0, import.meta.url);
 
 // src/node/constants/index.ts
-import path from "path";
-var PACKAGE_ROOT = path.join(__dirname, "..");
-var CLIENT_ENTRY_PATH = path.join(
+var _path = require('path'); var _path2 = _interopRequireDefault(_path);
+var PACKAGE_ROOT = _path2.default.join(__dirname, "..");
+var CLIENT_ENTRY_PATH = _path2.default.join(
   PACKAGE_ROOT,
   "src",
   "runtime",
   "client-entry.tsx"
 );
-var SERVER_ENTRY_PATH = path.join(
+var SERVER_ENTRY_PATH = _path2.default.join(
   PACKAGE_ROOT,
   "src",
   "runtime",
   "ssr-entry.tsx"
 );
-var DEFAULT_TEMPLATE_PATH = path.join(PACKAGE_ROOT, "template.html");
+var DEFAULT_TEMPLATE_PATH = _path2.default.join(PACKAGE_ROOT, "template.html");
 
 // src/node/plugin-island/indexHtml.ts
-import { readFile } from "fs/promises";
+var _promises = require('fs/promises');
 function pluginIndexHtml() {
   return {
     name: "island:index-html",
@@ -43,7 +40,7 @@ function pluginIndexHtml() {
     configureServer(server) {
       return () => {
         server.middlewares.use(async (req, res) => {
-          let content = await readFile(DEFAULT_TEMPLATE_PATH, "utf-8");
+          let content = await _promises.readFile.call(void 0, DEFAULT_TEMPLATE_PATH, "utf-8");
           content = await server.transformIndexHtml(
             req.url,
             content,
@@ -58,11 +55,11 @@ function pluginIndexHtml() {
 }
 
 // src/node/vitePlugins.ts
-import pluginReact from "@vitejs/plugin-react";
+var _pluginreact = require('@vitejs/plugin-react'); var _pluginreact2 = _interopRequireDefault(_pluginreact);
 
 // src/node/plugin-island/config.ts
-import { relative } from "path";
-import { join } from "path";
+
+
 var SITE_DATA_ID = "island:site-data";
 function pluginConfig(config, restartServer) {
   let server = null;
@@ -73,7 +70,7 @@ function pluginConfig(config, restartServer) {
         root: PACKAGE_ROOT,
         resolve: {
           alias: {
-            "@runtime": join(PACKAGE_ROOT, "src", "runtime", "index.ts")
+            "@runtime": _path.join.call(void 0, PACKAGE_ROOT, "src", "runtime", "index.ts")
           }
         }
       };
@@ -97,7 +94,7 @@ function pluginConfig(config, restartServer) {
       if (include(ctx.file)) {
         console.log(
           `
-${relative(config.root, ctx.file)} changed, restarting server...`
+${_path.relative.call(void 0, config.root, ctx.file)} changed, restarting server...`
         );
         await restartServer();
       }
@@ -106,9 +103,9 @@ ${relative(config.root, ctx.file)} changed, restarting server...`
 }
 
 // src/node/plugin-routes/RouteService.ts
-import fastGlob from "fast-glob";
-import { normalizePath } from "vite";
-import path2 from "path";
+var _fastglob = require('fast-glob'); var _fastglob2 = _interopRequireDefault(_fastglob);
+var _vite = require('vite');
+
 var RouteService = class {
   #scanDir;
   #routeData = [];
@@ -116,19 +113,19 @@ var RouteService = class {
     this.#scanDir = scanDir;
   }
   async init() {
-    const files = fastGlob.sync(["**/*.{js,jsx,ts,tsx,md,mdx}"], {
+    const files = _fastglob2.default.sync(["**/*.{js,jsx,ts,tsx,md,mdx}"], {
       cwd: this.#scanDir,
       absolute: true,
       ignore: ["**/node_modules/**", "**/build/**", "config.ts"]
     }).sort();
     files.forEach((file) => {
-      const fileRelativePath = normalizePath(
-        path2.relative(this.#scanDir, file)
+      const fileRelativePath = _vite.normalizePath.call(void 0, 
+        _path2.default.relative(this.#scanDir, file)
       );
       const routePath = this.normalizeRoutePath(fileRelativePath);
       this.#routeData.push({
         routePath,
-        absolutePath: normalizePath(file)
+        absolutePath: _vite.normalizePath.call(void 0, file)
       });
     });
   }
@@ -178,12 +175,12 @@ function pluginRoutes(options) {
 }
 
 // src/node/plugin-mdx/pluginMdxRollup.ts
-import pluginMdx from "@mdx-js/rollup";
-import remarkPluginGFM from "remark-gfm";
-import rehypePluginAutolinkHeadings from "rehype-autolink-headings";
-import rehypePluginSlug from "rehype-slug";
-import remarkPluginMDXFrontMatter from "remark-mdx-frontmatter";
-import remarkPluginFrontmatter from "remark-frontmatter";
+var _rollup = require('@mdx-js/rollup'); var _rollup2 = _interopRequireDefault(_rollup);
+var _remarkgfm = require('remark-gfm'); var _remarkgfm2 = _interopRequireDefault(_remarkgfm);
+var _rehypeautolinkheadings = require('rehype-autolink-headings'); var _rehypeautolinkheadings2 = _interopRequireDefault(_rehypeautolinkheadings);
+var _rehypeslug = require('rehype-slug'); var _rehypeslug2 = _interopRequireDefault(_rehypeslug);
+var _remarkmdxfrontmatter = require('remark-mdx-frontmatter'); var _remarkmdxfrontmatter2 = _interopRequireDefault(_remarkmdxfrontmatter);
+var _remarkfrontmatter = require('remark-frontmatter'); var _remarkfrontmatter2 = _interopRequireDefault(_remarkfrontmatter);
 
 // node_modules/.pnpm/unist-util-is@5.1.1/node_modules/unist-util-is/index.js
 var convert = function(test) {
@@ -330,9 +327,9 @@ var visit = function(tree, test, visitor, reverse) {
 var rehypePluginPreWrapper = () => {
   return (tree) => {
     visit(tree, "element", (node) => {
-      if (node.tagName === "pre" && node.children[0]?.type === "element" && node.children[0].tagName === "code" && !node.data?.isVisited) {
+      if (node.tagName === "pre" && _optionalChain([node, 'access', _ => _.children, 'access', _2 => _2[0], 'optionalAccess', _3 => _3.type]) === "element" && node.children[0].tagName === "code" && !_optionalChain([node, 'access', _4 => _4.data, 'optionalAccess', _5 => _5.isVisited])) {
         const codeNode = node.children[0];
-        const codeClassName = codeNode.properties?.className?.toString() || "";
+        const codeClassName = _optionalChain([codeNode, 'access', _6 => _6.properties, 'optionalAccess', _7 => _7.className, 'optionalAccess', _8 => _8.toString, 'call', _9 => _9()]) || "";
         const lang = codeClassName.split("-")[1];
         const clonedNode = {
           type: "element",
@@ -366,18 +363,40 @@ var rehypePluginPreWrapper = () => {
   };
 };
 
+// src/node/plugin-mdx/rehypePlugins/shiki.ts
+var _hastutilfromhtml = require('hast-util-from-html');
+var rehypePluginShiki = ({ highlighter }) => {
+  return (tree) => {
+    visit(tree, "element", (node, index, parent) => {
+      if (node.tagName === "pre" && _optionalChain([node, 'access', _10 => _10.children, 'access', _11 => _11[0], 'optionalAccess', _12 => _12.type]) === "element" && node.children[0].tagName === "code") {
+        const codeNode = node.children[0];
+        const codeContent = codeNode.children[0].value;
+        const codeClassName = _optionalChain([codeNode, 'access', _13 => _13.properties, 'optionalAccess', _14 => _14.className, 'optionalAccess', _15 => _15.toString, 'call', _16 => _16()]) || "";
+        const lang = codeClassName.split("-")[1];
+        if (!lang) {
+          return;
+        }
+        const highlightedCode = highlighter.codeToHtml(codeContent, { lang });
+        const fragmentAst = _hastutilfromhtml.fromHtml.call(void 0, highlightedCode, { fragment: true });
+        parent.children.splice(index, 1, ...fragmentAst.children);
+      }
+    });
+  };
+};
+
 // src/node/plugin-mdx/pluginMdxRollup.ts
-function pluginMdxRollup() {
-  return pluginMdx({
+var _shiki = require('shiki'); var _shiki2 = _interopRequireDefault(_shiki);
+async function pluginMdxRollup() {
+  return _rollup2.default.call(void 0, {
     remarkPlugins: [
-      remarkPluginGFM,
-      remarkPluginFrontmatter,
-      [remarkPluginMDXFrontMatter, { name: "frontmatter" }]
+      _remarkgfm2.default,
+      _remarkfrontmatter2.default,
+      [_remarkmdxfrontmatter2.default, { name: "frontmatter" }]
     ],
     rehypePlugins: [
-      rehypePluginSlug,
+      _rehypeslug2.default,
       [
-        rehypePluginAutolinkHeadings,
+        _rehypeautolinkheadings2.default,
         {
           properties: {
             class: "header-anchor"
@@ -388,34 +407,38 @@ function pluginMdxRollup() {
           }
         }
       ],
-      rehypePluginPreWrapper
+      rehypePluginPreWrapper,
+      [
+        rehypePluginShiki,
+        { highlighter: await _shiki2.default.getHighlighter({ theme: "nord" }) }
+      ]
     ]
   });
 }
 
 // src/node/plugin-mdx/index.ts
-function createPluginMdx() {
-  return [pluginMdxRollup()];
+async function createPluginMdx() {
+  return [await pluginMdxRollup()];
 }
 
 // src/node/vitePlugins.ts
-function createVitePlugins(config, restartServer) {
+async function createVitePlugins(config, restartServer) {
   return [
     pluginIndexHtml(),
-    pluginReact({
+    _pluginreact2.default.call(void 0, {
       jsxRuntime: "automatic"
     }),
     pluginConfig(config, restartServer),
     pluginRoutes({
       root: config.root
     }),
-    createPluginMdx()
+    await createPluginMdx()
   ];
 }
 
-export {
-  PACKAGE_ROOT,
-  CLIENT_ENTRY_PATH,
-  SERVER_ENTRY_PATH,
-  createVitePlugins
-};
+
+
+
+
+
+exports.PACKAGE_ROOT = PACKAGE_ROOT; exports.CLIENT_ENTRY_PATH = CLIENT_ENTRY_PATH; exports.SERVER_ENTRY_PATH = SERVER_ENTRY_PATH; exports.createVitePlugins = createVitePlugins;

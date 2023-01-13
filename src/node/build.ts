@@ -12,11 +12,13 @@ import { pathToFileURL } from 'url';
 // const dynamicImport = new Function('m', 'return import(m)');
 
 export async function bundle(root: string, config: SiteConfig) {
-  const resolveViteConfig = (isServer: boolean): InlineConfig => {
+  const resolveViteConfig = async (
+    isServer: boolean
+  ): Promise<InlineConfig> => {
     return {
       mode: 'production',
       root,
-      plugins: createVitePlugins(config),
+      plugins: await createVitePlugins(config),
       ssr: {
         noExternal: ['react-router-dom']
       },
@@ -39,8 +41,8 @@ export async function bundle(root: string, config: SiteConfig) {
   // console.log(('Building client + server bundles...'));
 
   try {
-    const clientBuild = async () => viteBuild(resolveViteConfig(false));
-    const serverBuild = async () => viteBuild(resolveViteConfig(true));
+    const clientBuild = async () => viteBuild(await resolveViteConfig(false));
+    const serverBuild = async () => viteBuild(await resolveViteConfig(true));
 
     const [clientBundle, serverBundle] = await Promise.all([
       clientBuild(),

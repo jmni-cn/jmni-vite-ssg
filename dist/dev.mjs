@@ -2,7 +2,7 @@ import { createRequire } from "module"; const require = createRequire(import.met
 import {
   PACKAGE_ROOT,
   createVitePlugins
-} from "./chunk-B53S34TV.mjs";
+} from "./chunk-F2ZV5VR3.mjs";
 import {
   resolveConfig
 } from "./chunk-RLDK5MNK.mjs";
@@ -14,7 +14,7 @@ async function createDevServer(root, restartServer) {
   console.log(config);
   return createServer({
     root: PACKAGE_ROOT,
-    plugins: createVitePlugins(config, restartServer),
+    plugins: await createVitePlugins(config, restartServer),
     server: {
       fs: {
         allow: [PACKAGE_ROOT]

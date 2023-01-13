@@ -3,7 +3,7 @@ import {
   CLIENT_ENTRY_PATH,
   SERVER_ENTRY_PATH,
   createVitePlugins
-} from "./chunk-B53S34TV.mjs";
+} from "./chunk-F2ZV5VR3.mjs";
 import {
   resolveConfig
 } from "./chunk-RLDK5MNK.mjs";
@@ -18,11 +18,11 @@ import fs from "fs-extra";
 import ora from "ora";
 import { pathToFileURL } from "url";
 async function bundle(root, config) {
-  const resolveViteConfig = (isServer) => {
+  const resolveViteConfig = async (isServer) => {
     return {
       mode: "production",
       root,
-      plugins: createVitePlugins(config),
+      plugins: await createVitePlugins(config),
       ssr: {
         noExternal: ["react-router-dom"]
       },
@@ -41,8 +41,8 @@ async function bundle(root, config) {
   const spinner = ora();
   spinner.start("Building client + server bundles...");
   try {
-    const clientBuild = async () => viteBuild(resolveViteConfig(false));
-    const serverBuild = async () => viteBuild(resolveViteConfig(true));
+    const clientBuild = async () => viteBuild(await resolveViteConfig(false));
+    const serverBuild = async () => viteBuild(await resolveViteConfig(true));
     const [clientBundle, serverBundle] = await Promise.all([
       clientBuild(),
       serverBuild()

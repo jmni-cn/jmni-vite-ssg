@@ -12,7 +12,7 @@
     "islandbuild": "island build docs",
     "preview": "cd docs/build && serve .",
     "lint": "eslint --fix  --ext .ts,.tsx,.js,.jsx ./",
-    "test:unit": "vitest --ui",
+    "test:unit": "vitest run",
     "prepare:e2e": "tsx scripts/prepare-e2e.ts",
     "test:e2e": "playwright test"
   },
@@ -67,6 +67,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "fast-glob": "^3.2.12",
     "fs-extra": "^10.1.0",
+    "hast-util-from-html": "^1.0.1",
     "ora": "^6.1.2",
     "prettier": "^2.8.1",
     "react": "^18.2.0",
@@ -77,6 +78,7 @@
     "remark-frontmatter": "^4.0.1",
     "remark-gfm": "^3.0.1",
     "remark-mdx-frontmatter": "^2.1.1",
+    "shiki": "^0.12.1",
     "vite": "^3.2.1"
   }
 }

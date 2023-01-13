@@ -3,7 +3,7 @@
 
 
 
-var _chunkC76KYJI6js = require('./chunk-C76KYJI6.js');
+var _chunkRXYPNVJKjs = require('./chunk-RXYPNVJK.js');
 
 
 var _chunk5ETD4WGWjs = require('./chunk-5ETD4WGW.js');
@@ -18,11 +18,11 @@ var _fsextra = require('fs-extra'); var _fsextra2 = _interopRequireDefault(_fsex
 var _ora = require('ora'); var _ora2 = _interopRequireDefault(_ora);
 var _url = require('url');
 async function bundle(root, config) {
-  const resolveViteConfig = (isServer) => {
+  const resolveViteConfig = async (isServer) => {
     return {
       mode: "production",
       root,
-      plugins: _chunkC76KYJI6js.createVitePlugins.call(void 0, config),
+      plugins: await _chunkRXYPNVJKjs.createVitePlugins.call(void 0, config),
       ssr: {
         noExternal: ["react-router-dom"]
       },
@@ -30,7 +30,7 @@ async function bundle(root, config) {
         ssr: isServer,
         outDir: isServer ? _path2.default.join(root, ".temp") : _path2.default.join(root, "build"),
         rollupOptions: {
-          input: isServer ? _chunkC76KYJI6js.SERVER_ENTRY_PATH : _chunkC76KYJI6js.CLIENT_ENTRY_PATH,
+          input: isServer ? _chunkRXYPNVJKjs.SERVER_ENTRY_PATH : _chunkRXYPNVJKjs.CLIENT_ENTRY_PATH,
           output: {
             format: isServer ? "cjs" : "esm"
           }
@@ -41,8 +41,8 @@ async function bundle(root, config) {
   const spinner = _ora2.default.call(void 0, );
   spinner.start("Building client + server bundles...");
   try {
-    const clientBuild = async () => _vite.build.call(void 0, resolveViteConfig(false));
-    const serverBuild = async () => _vite.build.call(void 0, resolveViteConfig(true));
+    const clientBuild = async () => _vite.build.call(void 0, await resolveViteConfig(false));
+    const serverBuild = async () => _vite.build.call(void 0, await resolveViteConfig(true));
     const [clientBundle, serverBundle] = await Promise.all([
       clientBuild(),
       serverBuild()
