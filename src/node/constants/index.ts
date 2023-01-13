@@ -15,4 +15,6 @@ export const SERVER_ENTRY_PATH = path.join(
   'ssr-entry.tsx'
 );
 
+export const MD_REGEX = /\.mdx?$/;
+
 export const DEFAULT_TEMPLATE_PATH = path.join(PACKAGE_ROOT, 'template.html');
