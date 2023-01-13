@@ -3,7 +3,7 @@ import {
   CLIENT_ENTRY_PATH,
   SERVER_ENTRY_PATH,
   createVitePlugins
-} from "./chunk-JWAEP22W.mjs";
+} from "./chunk-B53S34TV.mjs";
 import {
   resolveConfig
 } from "./chunk-RLDK5MNK.mjs";
