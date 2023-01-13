@@ -389,12 +389,57 @@ var rehypePluginShiki = ({ highlighter }) => {
 
 // src/node/plugin-mdx/pluginMdxRollup.ts
 import shiki from "shiki";
+
+// src/node/plugin-mdx/remarkPlugins/toc.ts
+import Slugger from "github-slugger";
+import { parse } from "acorn";
+var slugger = new Slugger();
+var remarkPluginToc = () => {
+  return (tree) => {
+    const toc = [];
+    visit(tree, "heading", (node) => {
+      if (!node.depth || !node.children) {
+        return;
+      }
+      if (node.depth > 1 && node.depth < 5) {
+        const originText = node.children.map((child) => {
+          switch (child.type) {
+            case "link":
+              return child.children?.map((c) => c.value).join("") || "";
+            default:
+              return child.value;
+          }
+        }).join("");
+        const id = slugger.slug(originText);
+        toc.push({
+          id,
+          text: originText,
+          depth: node.depth
+        });
+      }
+    });
+    const insertCode = `export const toc = ${JSON.stringify(toc, null, 2)};`;
+    tree.children.push({
+      type: "mdxjsEsm",
+      value: insertCode,
+      data: {
+        estree: parse(insertCode, {
+          ecmaVersion: 2020,
+          sourceType: "module"
+        })
+      }
+    });
+  };
+};
+
+// src/node/plugin-mdx/pluginMdxRollup.ts
 async function pluginMdxRollup() {
   return pluginMdx({
     remarkPlugins: [
       remarkPluginGFM,
       remarkPluginFrontmatter,
-      [remarkPluginMDXFrontMatter, { name: "frontmatter" }]
+      [remarkPluginMDXFrontMatter, { name: "frontmatter" }],
+      remarkPluginToc
     ],
     rehypePlugins: [
       rehypePluginSlug,

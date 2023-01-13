@@ -386,12 +386,57 @@ var rehypePluginShiki = ({ highlighter }) => {
 
 // src/node/plugin-mdx/pluginMdxRollup.ts
 var _shiki = require('shiki'); var _shiki2 = _interopRequireDefault(_shiki);
+
+// src/node/plugin-mdx/remarkPlugins/toc.ts
+var _githubslugger = require('github-slugger'); var _githubslugger2 = _interopRequireDefault(_githubslugger);
+var _acorn = require('acorn');
+var slugger = new (0, _githubslugger2.default)();
+var remarkPluginToc = () => {
+  return (tree) => {
+    const toc = [];
+    visit(tree, "heading", (node) => {
+      if (!node.depth || !node.children) {
+        return;
+      }
+      if (node.depth > 1 && node.depth < 5) {
+        const originText = node.children.map((child) => {
+          switch (child.type) {
+            case "link":
+              return _optionalChain([child, 'access', _17 => _17.children, 'optionalAccess', _18 => _18.map, 'call', _19 => _19((c) => c.value), 'access', _20 => _20.join, 'call', _21 => _21("")]) || "";
+            default:
+              return child.value;
+          }
+        }).join("");
+        const id = slugger.slug(originText);
+        toc.push({
+          id,
+          text: originText,
+          depth: node.depth
+        });
+      }
+    });
+    const insertCode = `export const toc = ${JSON.stringify(toc, null, 2)};`;
+    tree.children.push({
+      type: "mdxjsEsm",
+      value: insertCode,
+      data: {
+        estree: _acorn.parse.call(void 0, insertCode, {
+          ecmaVersion: 2020,
+          sourceType: "module"
+        })
+      }
+    });
+  };
+};
+
+// src/node/plugin-mdx/pluginMdxRollup.ts
 async function pluginMdxRollup() {
   return _rollup2.default.call(void 0, {
     remarkPlugins: [
       _remarkgfm2.default,
       _remarkfrontmatter2.default,
-      [_remarkmdxfrontmatter2.default, { name: "frontmatter" }]
+      [_remarkmdxfrontmatter2.default, { name: "frontmatter" }],
+      remarkPluginToc
     ],
     rehypePlugins: [
       _rehypeslug2.default,

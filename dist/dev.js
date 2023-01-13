@@ -2,7 +2,7 @@
 
 
 
-var _chunkRXYPNVJKjs = require('./chunk-RXYPNVJK.js');
+var _chunkSPQRVDWTjs = require('./chunk-SPQRVDWT.js');
 
 
 var _chunk5ETD4WGWjs = require('./chunk-5ETD4WGW.js');
@@ -13,11 +13,11 @@ async function createDevServer(root, restartServer) {
   const config = await _chunk5ETD4WGWjs.resolveConfig.call(void 0, root, "serve", "development");
   console.log(config);
   return _vite.createServer.call(void 0, {
-    root: _chunkRXYPNVJKjs.PACKAGE_ROOT,
-    plugins: await _chunkRXYPNVJKjs.createVitePlugins.call(void 0, config, restartServer),
+    root: _chunkSPQRVDWTjs.PACKAGE_ROOT,
+    plugins: await _chunkSPQRVDWTjs.createVitePlugins.call(void 0, config, restartServer),
     server: {
       fs: {
-        allow: [_chunkRXYPNVJKjs.PACKAGE_ROOT]
+        allow: [_chunkSPQRVDWTjs.PACKAGE_ROOT]
       }
     }
   });
