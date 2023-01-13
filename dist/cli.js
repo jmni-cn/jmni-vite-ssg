@@ -1,9 +1,9 @@
-"use strict"; function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }var _module = require('module'); const require = _module.createRequire.call(void 0, import.meta.url);
+"use strict"; function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; } function _optionalChain(ops) { let lastAccessLHS = undefined; let value = ops[0]; let i = 1; while (i < ops.length) { const op = ops[i]; const fn = ops[i + 1]; i += 2; if ((op === 'optionalAccess' || op === 'optionalCall') && value == null) { return undefined; } if (op === 'access' || op === 'optionalAccess') { lastAccessLHS = value; value = fn(value); } else if (op === 'call' || op === 'optionalCall') { value = fn((...args) => value.call(lastAccessLHS, ...args)); lastAccessLHS = undefined; } } return value; }var _module = require('module'); const require = _module.createRequire.call(void 0, import.meta.url);
 
 
 
 
-var _chunkF6RGEJYRjs = require('./chunk-F6RGEJYR.js');
+var _chunk4MBNSSMBjs = require('./chunk-4MBNSSMB.js');
 
 
 var _chunk5ETD4WGWjs = require('./chunk-5ETD4WGW.js');
@@ -22,7 +22,7 @@ async function bundle(root, config) {
     return {
       mode: "production",
       root,
-      plugins: await _chunkF6RGEJYRjs.createVitePlugins.call(void 0, config),
+      plugins: await _chunk4MBNSSMBjs.createVitePlugins.call(void 0, config, void 0, isServer),
       ssr: {
         noExternal: ["react-router-dom"]
       },
@@ -30,7 +30,7 @@ async function bundle(root, config) {
         ssr: isServer,
         outDir: isServer ? _path2.default.join(root, ".temp") : _path2.default.join(root, "build"),
         rollupOptions: {
-          input: isServer ? _chunkF6RGEJYRjs.SERVER_ENTRY_PATH : _chunkF6RGEJYRjs.CLIENT_ENTRY_PATH,
+          input: isServer ? _chunk4MBNSSMBjs.SERVER_ENTRY_PATH : _chunk4MBNSSMBjs.CLIENT_ENTRY_PATH,
           output: {
             format: isServer ? "cjs" : "esm"
           }
@@ -53,33 +53,45 @@ async function bundle(root, config) {
     console.log(e);
   }
 }
-async function renderPage(render, root, clientBundle) {
-  const appHtml = render();
+async function renderPage(render, root, clientBundle, routes) {
+  console.log("Rendering page in server side...");
   const clientChunk = clientBundle.output.find(
     (chunk) => chunk.type === "chunk" && chunk.isEntry
   );
-  const html = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      <title>title</title>
-      <meta name="description" content="xxx">
-    </head>
-    <body>
-      <div id="root">${appHtml}</div>
-      <script src="/${clientChunk.fileName}" type="module" ><\/script>
-    </body>
-  </html>`.trim();
-  await _fsextra2.default.writeFile(_path2.default.join(root, "build", "index.html"), html);
+  await Promise.all(
+    routes.map(async (route) => {
+      const routePath = route.path;
+      const appHtml = render(routePath);
+      const html = `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>title</title>
+    <meta name="description" content="xxx">
+  </head>
+  <body>
+    <div id="root">${appHtml}</div>
+    <script type="module" src="/${_optionalChain([clientChunk, 'optionalAccess', _ => _.fileName])}"><\/script>
+  </body>
+</html>`.trim();
+      const fileName = routePath.endsWith("/") ? `${routePath}index.html` : `${routePath}.html`;
+      await _fsextra2.default.ensureDir(_path.join.call(void 0, root, "build", _path.dirname.call(void 0, fileName)));
+      await _fsextra2.default.writeFile(_path.join.call(void 0, root, "build", fileName), html);
+    })
+  );
   await _fsextra2.default.remove(_path2.default.join(root, ".temp"));
 }
 async function build(root = process.cwd(), config) {
   const [clientBundle, serverBundle] = await bundle(root, config);
   const serverEntryPath = _path2.default.join(root, ".temp", "ssr-entry.js");
-  const { render } = await Promise.resolve().then(() => require(_url.pathToFileURL.call(void 0, serverEntryPath).pathname));
-  await renderPage(render, root, clientBundle);
+  const { render, routes } = await Promise.resolve().then(() => require(_url.pathToFileURL.call(void 0, serverEntryPath).pathname));
+  try {
+    await renderPage(render, root, clientBundle, routes);
+  } catch (e) {
+    console.log("Render page error.\n", e);
+  }
 }
 
 // src/node/cli.ts

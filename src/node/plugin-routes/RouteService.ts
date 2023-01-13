@@ -37,22 +37,24 @@ export class RouteService {
     });
   }
 
-  generateRoutesCode() {
+  generateRoutesCode(ssr: boolean) {
     return `
-        import React from 'react';
-        import loadable from '@loadable/component';
-        ${this.#routeData
-          .map((route, index) => {
-            return `const Route${index} = loadable(() => import('${route.absolutePath}'));`;
-          })
-          .join('\n       ')}
-        export const routes = [
-        ${this.#routeData
-          .map((route, index) => {
-            return `{ path: '${route.routePath}', element: React.createElement(Route${index}) }`;
-          })
-          .join(',\n       ')}
-        ];
+import React from 'react';
+${ssr ? '' : 'import loadable from "@loadable/component";'}
+${this.#routeData
+  .map((route, index) => {
+    return ssr
+      ? `import Route${index} from "${route.absolutePath}";`
+      : `const Route${index} = loadable(() => import('${route.absolutePath}'));`;
+  })
+  .join('\n       ')}
+export const routes = [
+${this.#routeData
+  .map((route, index) => {
+    return `{ path: '${route.routePath}', element: React.createElement(Route${index}) }`;
+  })
+  .join(',\n       ')}
+];
     `;
   }
 

@@ -2,7 +2,7 @@ import { createRequire } from "module"; const require = createRequire(import.met
 import {
   PACKAGE_ROOT,
   createVitePlugins
-} from "./chunk-WOP5NHYP.mjs";
+} from "./chunk-L24AZRUW.mjs";
 import {
   resolveConfig
 } from "./chunk-RLDK5MNK.mjs";

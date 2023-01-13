@@ -133,18 +133,18 @@ var RouteService = class {
       });
     });
   }
-  generateRoutesCode() {
+  generateRoutesCode(ssr) {
     return `
-        import React from 'react';
-        import loadable from '@loadable/component';
-        ${this.#routeData.map((route, index) => {
-      return `const Route${index} = loadable(() => import('${route.absolutePath}'));`;
+import React from 'react';
+${ssr ? "" : 'import loadable from "@loadable/component";'}
+${this.#routeData.map((route, index) => {
+      return ssr ? `import Route${index} from "${route.absolutePath}";` : `const Route${index} = loadable(() => import('${route.absolutePath}'));`;
     }).join("\n       ")}
-        export const routes = [
-        ${this.#routeData.map((route, index) => {
+export const routes = [
+${this.#routeData.map((route, index) => {
       return `{ path: '${route.routePath}', element: React.createElement(Route${index}) }`;
     }).join(",\n       ")}
-        ];
+];
     `;
   }
   getRouteMeta() {
@@ -172,7 +172,7 @@ function pluginRoutes(options) {
     },
     load(id) {
       if (id === "\0" + CONVENTIONAL_ROUTE_ID) {
-        return routeService.generateRoutesCode();
+        return routeService.generateRoutesCode(options.isSSR || false);
       }
     }
   };
@@ -502,7 +502,7 @@ async function createPluginMdx() {
 }
 
 // src/node/vitePlugins.ts
-async function createVitePlugins(config, restartServer) {
+async function createVitePlugins(config, restartServer, isSSR = false) {
   return [
     pluginIndexHtml(),
     pluginReact({
@@ -510,7 +510,8 @@ async function createVitePlugins(config, restartServer) {
     }),
     pluginConfig(config, restartServer),
     pluginRoutes({
-      root: config.root
+      root: config.root,
+      isSSR
     }),
     await createPluginMdx()
   ];
