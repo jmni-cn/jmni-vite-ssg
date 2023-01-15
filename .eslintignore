@@ -7,3 +7,7 @@ build
 bin
 esm-cjs
 docs
+e2e
+scripts
+.temp
+*.d.ts

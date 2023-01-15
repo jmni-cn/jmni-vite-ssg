@@ -3,7 +3,7 @@
 
 
 
-var _chunk4MBNSSMBjs = require('./chunk-4MBNSSMB.js');
+var _chunk6MY2UVLSjs = require('./chunk-6MY2UVLS.js');
 
 
 var _chunk5ETD4WGWjs = require('./chunk-5ETD4WGW.js');
@@ -22,7 +22,7 @@ async function bundle(root, config) {
     return {
       mode: "production",
       root,
-      plugins: await _chunk4MBNSSMBjs.createVitePlugins.call(void 0, config, void 0, isServer),
+      plugins: await _chunk6MY2UVLSjs.createVitePlugins.call(void 0, config, void 0, isServer),
       ssr: {
         noExternal: ["react-router-dom"]
       },
@@ -30,7 +30,7 @@ async function bundle(root, config) {
         ssr: isServer,
         outDir: isServer ? _path2.default.join(root, ".temp") : _path2.default.join(root, "build"),
         rollupOptions: {
-          input: isServer ? _chunk4MBNSSMBjs.SERVER_ENTRY_PATH : _chunk4MBNSSMBjs.CLIENT_ENTRY_PATH,
+          input: isServer ? _chunk6MY2UVLSjs.SERVER_ENTRY_PATH : _chunk6MY2UVLSjs.CLIENT_ENTRY_PATH,
           output: {
             format: isServer ? "cjs" : "esm"
           }

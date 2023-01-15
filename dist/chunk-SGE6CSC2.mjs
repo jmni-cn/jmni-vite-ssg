@@ -142,7 +142,7 @@ ${this.#routeData.map((route, index) => {
     }).join("\n       ")}
 export const routes = [
 ${this.#routeData.map((route, index) => {
-      return `{ path: '${route.routePath}', element: React.createElement(Route${index}) }`;
+      return `{ path: '${route.routePath}', element: React.createElement(Route${index}), preload: () => import('${route.absolutePath}') }`;
     }).join(",\n       ")}
 ];
     `;
@@ -158,8 +158,8 @@ ${this.#routeData.map((route, index) => {
 
 // src/node/plugin-routes/index.ts
 var CONVENTIONAL_ROUTE_ID = "island:routes";
-function pluginRoutes(options) {
-  const routeService = new RouteService(options.root);
+function pluginRoutes(options2) {
+  const routeService = new RouteService(options2.root);
   return {
     name: "island:routes",
     async configResolved() {
@@ -172,7 +172,7 @@ function pluginRoutes(options) {
     },
     load(id) {
       if (id === "\0" + CONVENTIONAL_ROUTE_ID) {
-        return routeService.generateRoutesCode(options.isSSR || false);
+        return routeService.generateRoutesCode(options2.isSSR || false);
       }
     }
   };
@@ -502,8 +502,19 @@ async function createPluginMdx() {
 }
 
 // src/node/vitePlugins.ts
+import pluginUnocss from "unocss/vite";
+
+// src/node/unocssOptions.ts
+import { presetAttributify, presetWind, presetIcons } from "unocss";
+var options = {
+  presets: [presetAttributify(), presetWind({}), presetIcons()]
+};
+var unocssOptions_default = options;
+
+// src/node/vitePlugins.ts
 async function createVitePlugins(config, restartServer, isSSR = false) {
   return [
+    pluginUnocss(unocssOptions_default),
     pluginIndexHtml(),
     pluginReact({
       jsxRuntime: "automatic"
