@@ -1,5 +1,8 @@
 import { usePageData } from '../../runtime';
 import { Content } from '../../runtime/Content';
+import { Nav } from '../components/Nav';
+import '../styles/base.css';
+import '../styles/vars.css';
 import 'uno.css';
 
 export function Layout() {
@@ -14,7 +17,7 @@ export function Layout() {
       return (
         <div>
           <h1 p="2" m="2" className="rounded-l-[var(--radius)]">
-            Common Content
+            Common111 Content
           </h1>
           <h1>Doc Content</h1>
           <button
@@ -31,8 +34,9 @@ export function Layout() {
   };
   return (
     <div>
-      <div>nav</div>
-      {getContent()}
+      <Nav />
+      {/* <div>nav</div> */}
+      {/* {getContent()} */}
     </div>
   );
 }

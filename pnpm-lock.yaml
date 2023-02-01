@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@commitlint/cli': ^17.3.0
   '@commitlint/config-conventional': ^17.3.0
+  '@iconify-json/carbon': ^1.1.14
   '@loadable/component': ^5.15.2
   '@mdx-js/rollup': 2.1.3
   '@playwright/test': 1.26.1
@@ -48,6 +49,7 @@ specifiers:
   remark-rehype: ^10.1.0
   remark-stringify: ^10.0.2
   rollup: ^3.2.3
+  sass: ^1.58.0
   serve: ^14.0.1
   shiki: ^0.12.1
   tsup: ^6.5.0
@@ -83,11 +85,12 @@ dependencies:
   remark-mdx-frontmatter: 2.1.1
   shiki: 0.12.1
   unocss: 0.48.4_rollup@3.2.3+vite@3.2.1
-  vite: 3.2.1
+  vite: 3.2.1_sass@1.58.0
 
 devDependencies:
   '@commitlint/cli': 17.3.0
   '@commitlint/config-conventional': 17.3.0
+  '@iconify-json/carbon': 1.1.14
   '@loadable/component': 5.15.2_react@18.2.0
   '@playwright/test': 1.26.1
   '@types/fs-extra': 9.0.13
@@ -112,13 +115,14 @@ devDependencies:
   remark-rehype: 10.1.0
   remark-stringify: 10.0.2
   rollup: 3.2.3
+  sass: 1.58.0
   serve: 14.0.1
   tsup: 6.5.0_typescript@4.8.4
   tsx: 3.12.1
   typescript: 4.8.4
   unified: 10.1.2
   unist-util-visit: 4.1.1
-  vitest: 0.26.3_@vitest+ui@0.26.3
+  vitest: 0.26.3_u7s5wpgxro5rahlyog6q7gigqe
 
 packages:
 
@@ -653,9 +657,14 @@ packages:
   /@humanwhocodes/object-schema/1.2.1:
     resolution: {integrity: sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==}
 
+  /@iconify-json/carbon/1.1.14:
+    resolution: {integrity: sha512-Md5Vh3x2ALI5shFHlqZQBpEBk0coZf8bcFqzZBqf3bZuUTDg78y9vkwhQ+0PF1Q3wmZIfwkSJU9Pf6V228pXxw==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
   /@iconify/types/2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
-    dev: false
 
   /@iconify/utils/2.0.12:
     resolution: {integrity: sha512-hhUyt1/k5RRhfcW/PRRdBw8e1ACehJT5QEZJRm7HnkCiUx11/0ccLr7K0OMlPSwjnfYcBS2gAUD3EpmL0iJCkQ==}
@@ -1226,7 +1235,7 @@ packages:
       chokidar: 3.5.3
       fast-glob: 3.2.12
       magic-string: 0.27.0
-      vite: 3.2.1
+      vite: 3.2.1_sass@1.58.0
     transitivePeerDependencies:
       - rollup
     dev: false
@@ -1244,7 +1253,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.19.6_@babel+core@7.19.6
       magic-string: 0.26.7
       react-refresh: 0.14.0
-      vite: 3.2.1
+      vite: 3.2.1_sass@1.58.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -2962,6 +2971,9 @@ packages:
   /ignore/5.2.4:
     resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}
     engines: {node: '>= 4'}
+
+  /immutable/4.2.2:
+    resolution: {integrity: sha512-fTMKDwtbvO5tldky9QZ2fMX7slR0mYpY5nbnFWYp0fOzDhHqhgIw9KoYgxLWsoNTS9ZHGauHj18DTyEw6BK3Og==}
 
   /import-fresh/3.3.0:
     resolution: {integrity: sha512-veYYhQa+D1QBKznvhUHxb8faxlrwUnxseDAbAp457E0wLNio2bOSKnjYDhMj+YiAq61xrMGhQk9iXVk5FzgQMw==}
@@ -4877,6 +4889,15 @@ packages:
       is-regex: 1.1.4
     dev: true
 
+  /sass/1.58.0:
+    resolution: {integrity: sha512-PiMJcP33DdKtZ/1jSjjqVIKihoDc6yWmYr9K/4r3fVVIEDAluD0q7XZiRKrNJcPK3qkLRF/79DND1H5q1LBjgg==}
+    engines: {node: '>=12.0.0'}
+    hasBin: true
+    dependencies:
+      chokidar: 3.5.3
+      immutable: 4.2.2
+      source-map-js: 1.0.2
+
   /scheduler/0.23.0:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npm.taobao.org/scheduler/-/scheduler-0.23.0.tgz}
     dependencies:
@@ -5010,7 +5031,7 @@ packages:
     dev: true
 
   /source-map-js/1.0.2:
-    resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npm.taobao.org/source-map-js/-/source-map-js-1.0.2.tgz}
+    resolution: {integrity: sha512-R0XvVJ9WusLiqTCEiGCmICCMplcCkIwwR11mOSD9CR5u+IXYdiseeEuXCVAjS54zqwkLcPNnmU4OeJ6tUrWhDw==}
     engines: {node: '>=0.10.0'}
 
   /source-map-support/0.5.21:
@@ -5646,7 +5667,7 @@ packages:
       unist-util-stringify-position: 3.0.2
       vfile-message: 3.1.3
 
-  /vite-node/0.26.3:
+  /vite-node/0.26.3_sass@1.58.0:
     resolution: {integrity: sha512-Te2bq0Bfvq6XiO718I+1EinMjpNYKws6SNHKOmVbILAQimKoZKDd+IZLlkaYcBXPpK3HFe2U80k8Zw+m3w/a2w==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
@@ -5656,7 +5677,7 @@ packages:
       pathe: 0.2.0
       source-map: 0.6.1
       source-map-support: 0.5.21
-      vite: 3.2.1
+      vite: 3.2.1_sass@1.58.0
     transitivePeerDependencies:
       - less
       - sass
@@ -5666,7 +5687,7 @@ packages:
       - terser
     dev: true
 
-  /vite/3.2.1:
+  /vite/3.2.1_sass@1.58.0:
     resolution: {integrity: sha512-ADtMkfHuWq4tskJsri2n2FZkORO8ZyhI+zIz7zTrDAgDEtct1jdxOg3YsZBfHhKjmMoWLOSCr+64qrEDGo/DbQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npm.taobao.org/vite/-/vite-3.2.1.tgz}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -5692,10 +5713,11 @@ packages:
       postcss: 8.4.18
       resolve: 1.22.1
       rollup: 2.79.1
+      sass: 1.58.0
     optionalDependencies:
       fsevents: 2.3.2
 
-  /vitest/0.26.3_@vitest+ui@0.26.3:
+  /vitest/0.26.3_u7s5wpgxro5rahlyog6q7gigqe:
     resolution: {integrity: sha512-FmHxU9aUCxTi23keF3vxb/Qp0lYXaaJ+jRLGOUmMS3qVTOJvgGE+f1VArupA6pEhaG2Ans4X+zV9dqM5WISMbg==}
     engines: {node: '>=v14.16.0'}
     hasBin: true
@@ -5731,8 +5753,8 @@ packages:
       tinybench: 2.3.1
       tinypool: 0.3.0
       tinyspy: 1.0.2
-      vite: 3.2.1
-      vite-node: 0.26.3
+      vite: 3.2.1_sass@1.58.0
+      vite-node: 0.26.3_sass@1.58.0
     transitivePeerDependencies:
       - less
       - sass
