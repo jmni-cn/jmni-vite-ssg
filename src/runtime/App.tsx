@@ -12,7 +12,7 @@ export async function initPageData(routePath: string): Promise<PageData> {
     // Preload route component
     // 待补充信息: preload 方法
     const moduleInfo = await matched[0].route.preload();
-    console.log(moduleInfo);
+    // console.log(moduleInfo);
     return {
       pageType: 'doc',
       siteData,

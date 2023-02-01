@@ -7,7 +7,6 @@ import 'uno.css';
 
 export function Layout() {
   const pageData = usePageData();
-  console.log(pageData);
 
   const { pageType } = pageData;
   const getContent = () => {
